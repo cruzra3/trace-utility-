@@ -1,0 +1,69 @@
+/* DSPTRCDTA CL PGM TO FORMAT DATA INTO EASY-TO-READ FORMAT */
+             PGM        PARM(&TRC &CLR &EDBG &SRCFL &SRCM)
+             DCL        VAR(&TRC) TYPE(*CHAR) LEN(6)
+             DCL        VAR(&CLR) TYPE(*CHAR) LEN(4)
+             DCL        VAR(&EDBG) TYPE(*CHAR) LEN(4)
+             DCL        VAR(&SRCFL) TYPE(*CHAR) LEN(20)
+             DCL        VAR(&SRCF) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&SRCL) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&SRCM) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&MSGID) TYPE(*CHAR) LEN(7)
+             DCL        VAR(&MSGDTA) TYPE(*CHAR) LEN(256)
+             DCL        VAR(&MSGF) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&MSGFLIB) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&ERRORSW) TYPE(*LGL)
+             MONMSG     MSGID(CPF0000) EXEC(GOTO CMDLBL(ERROR))
+             CHGVAR     VAR(&SRCF) VALUE(&SRCFL)
+             CHGVAR     VAR(&SRCL) VALUE(%SST(&SRCFL 11 10))
+             OVRPRTF    FILE(QPDBGDSP) HOLD(*YES)
+             IF         COND(&TRC *EQ '*PRINT') THEN(DO)
+             IF         COND((&SRCF *NE '*NONE') *AND (&SRCM *NE +
+                          '*FIRST')) THEN(CHKOBJ OBJ(&SRCL/&SRCF) +
+                          OBJTYPE(*FILE) MBR(&SRCM))
+             IF         COND((&SRCF *NE '*NONE') *AND (&SRCM *EQ +
+                          '*FIRST')) THEN(CHKOBJ OBJ(&SRCL/&SRCF) +
+                          OBJTYPE(*FILE))
+             ENDDO
+             DSPTRCDTA  OUTPUT(&TRC) CLEAR(&CLR)
+             IF         COND(&EDBG *EQ '*YES') THEN(ENDDBG)
+             IF         COND(&TRC *EQ '*PRINT') THEN(DO)
+             CRTPF      FILE(QTEMP/DBGCPY) RCDLEN(150) SIZE(*NOMAX)
+             MONMSG     MSGID(CPF0000)
+             CPYSPLF    FILE(QPDBGDSP) TOFILE(QTEMP/DBGCPY) +
+                          SPLNBR(*LAST) CTLCHAR(*FCFC)
+             DLTSPLF    FILE(QPDBGDSP) SPLNBR(*LAST)
+             OVRDBF     FILE(DBGCPY) TOFILE(QTEMP/DBGCPY)
+             CRTSRCPF   FILE(QTEMP/DBGSRC) MBR(*FILE) ACCPTH(*KEYED) +
+                          MAINT(*DLY)
+             MONMSG     MSGID(CPF0000) EXEC(CLRPFM FILE(QTEMP/DBGSRC))
+             IF         COND(&SRCF *NE '*NONE') THEN(CPYF +
+                          FROMFILE(&SRCL/&SRCF) +
+                          TOFILE(QTEMP/DBGSRC) FROMMBR(&SRCM) +
+                          MBROPT(*REPLACE))
+             OVRDBF     FILE(DBGSRC) TOFILE(QTEMP/DBGSRC)
+             CALL       PGM(DBGPRT)
+             ENDDO
+
+ ENDIT:      DLTF       FILE(QTEMP/DBGSRC)
+             MONMSG     MSGID(CPF0000)
+             DLTF       FILE(QTEMP/DBGCPY)
+             MONMSG     MSGID(CPF0000)
+             RETURN
+ERROR: /* STANDARD ERROR HANDLER */
+             IF         COND(&ERRORSW) THEN(SNDPGMMSG MSGID(CPF9999) +
+                          MSGF(QCPFMSG) MSGTYPE(*ESCAPE)) /* +
+                          FUNCTION CHECK MESSAGE */
+             CHGVAR     VAR(&ERRORSW) VALUE('1')
+ ERROR2:     RCVMSG     MSGTYPE(*DIAG) MSGDTA(&MSGDTA) MSGID(&MSGID) +
+                          MSGF(&MSGF) MSGFLIB(&MSGFLIB)
+             IF         COND(&MSGID = '  ') THEN(GOTO CMDLBL(ERROR3))
+             SNDPGMMSG  MSGID(&MSGID) MSGF(&MSGFLIB/&MSGF) +
+                          MSGTYPE(*DIAG)
+
+             GOTO       CMDLBL(ERROR2)
+ ERROR3:     RCVMSG     MSGTYPE(*EXCP) MSGDTA(&MSGDTA) MSGID(&MSGID) +
+                          MSGF(&MSGF) MSGFLIB(&MSGFLIB)
+             SNDPGMMSG  MSGID(&MSGID) MSGF(&MSGFLIB/&MSGF) +
+                          MSGDTA(&MSGDTA) MSGTYPE(*ESCAPE)
+             ENDPGM
+

@@ -1,0 +1,10 @@
+/* DSPTRCDTA CL PGM TO FORMAT DATA INTO EASY-TO-READ FORMAT */
+             PGM
+             CRTPF      FILE(QTEMP/DBGCPY) RCDLEN(150) SIZE(*NOMAX)
+             CRTSRCPF   FILE(QTEMP/DBGSRC) MBR(*FILE) ACCPTH(*KEYED) +
+                          MAINT(*DLY)
+             CRTRPGPGM  PGM(SYDEVGENX/DBGPRT) +
+                          SRCFILE(SYDEVGENX/TRACE) SRCMBR(DBGPRT) +
+                          OPTION(*SOURCE)
+             ENDPGM
+

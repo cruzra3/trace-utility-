@@ -1,0 +1,18 @@
+             CMD        PROMPT('DSPTRCDTA COMMAND')
+             PARM       KWD(OUTPUT) TYPE(*CHAR) LEN(8) RSTD(*YES) +
+                          DFT(*PRINT) VALUES(* *PRINT) +
+                          PROMPT('DSPTRCDTA output')
+             PARM       KWD(CLEAR) TYPE(*CHAR) LEN(4) RSTD(*YES) +
+                          DFT(*NO) VALUES(*NO *YES) +
+                          PROMPT('Clear trace data')
+             PARM       KWD(ENDDBG) TYPE(*CHAR) LEN(4) RSTD(*YES) +
+                          DFT(*NO) VALUES(*NO *YES) +
+                          PROMPT('ENDDBG after DSPTRCDTA')
+             PARM       KWD(SRCF) TYPE(QUAL1) PROMPT('Source file +
+                          name')
+ QUAL1:      QUAL       TYPE(*NAME) LEN(10) DFT(*NONE) SPCVAL((*NONE))
+             QUAL       TYPE(*CHAR) LEN(10) DFT(*LIBL) +
+                        PROMPT('Library name')
+             PARM       KWD(SRCMBR) TYPE(*NAME) LEN(10) DFT(*FIRST) +
+                          SPCVAL((*FIRST)) PROMPT('Source member name')
+

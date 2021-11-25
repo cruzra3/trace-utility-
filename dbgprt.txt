@@ -1,0 +1,111 @@
+     FDBGCPY  IP  F     133            DISK
+     FDBGSRC  IF  E           K        DISK
+     F            DBGSRC                            KRENAMERDBGSRC
+     FQSYSPRT O   F     132     OF     PRINTER      KPRTCTLPRTDS
+     E                    TABA    1  16  1   TABB    4
+     E                    TST         7  1
+     E                    NUM         6  1
+     IDBGCPY  NS
+     I                                        1   1 CNTRL1
+     I                                        2 133 PRTLIN
+     I                                        3  12 PGMNAM
+     I                                        3   9 TEST@@
+     I                                        5   5 QUOTE
+     I                                       20  21 TESTN
+     I                                       20  26 TST
+     I                                       20  26 SEQNUM
+     I                                       44  44 COLON
+     I                                       44  44 PERIOD
+     I                                       49  52 RCRLVL
+     I                                       53  57 END
+     I                                       76  81 TRCNUM
+     I            DS
+     I                                        1   6 NUM
+     I                                        1   62NUMKEY
+     IPRTDS       DS
+     I                                        1   1 SPCBFR
+     I                                        2   2 SPCAFT
+     I                                        3   3 SKPBFR
+     I                                        4   4 SLPAFT
+     I                                        7   90CURLIN
+     C                     MOVEL'0000'    PRTDS
+     C           CNTRL1    LOKUPTABA      TABB           58
+     C                     MOVELTABB      PRTDS
+     C           TEST@@    IFEQ '5728SS1'
+     C           END       OREQ 'E N D'
+     C                     EXCPTL132#1
+     C                     ELSE
+     C           TEST@@    IFEQ *BLANKS
+     C                     EXCPTL132#2
+     C                     ELSE
+     C           TEST@@    IFEQ 'Program'
+     C                     EXCPTL132#3
+     C                     ELSE
+     C           COLON     IFEQ ':'
+     C           PERIOD    OREQ '.'
+     C           QUOTE     OREQ ''''
+     C                     EXCPTL132#1
+     C                     ELSE
+     C                     TESTN          TESTN      54
+     C           *IN54     IFEQ '0'
+     C                     EXCPTL132#4
+     C                     ELSE
+     C                     MOVE *ZEROS    NUMKEY
+     C           4         DO   7         C1      20
+     C           TST,C1    IFEQ *BLANKS
+     C           8         SUB  C1        C2      20
+     C                     MOVEATST       NUM,C2
+     C                     Z-ADD7         C1
+     C                     END
+     C                     END
+     C           NUMKEY    CHAINDBGSRC               91
+     C                     EXCPTL132#5
+     C                     END
+     C                     END
+     C                     END
+     C                     END
+     C                     END
+     OQSYSPRT E                L132#1
+     O                         PRTLIN B 132
+     OQSYSPRT E 21             L132#2
+     O                                    7 'Statmnt'
+     O***                                34 'Recursion'
+     O***                                44 'Sequence'
+     OQSYSPRT E  1             L132#3
+     O***                                 7 'Program'
+     O                                    7 '#'
+     O                                   99 'Program'
+     O***                                30 'Level'
+     O***                                42 'Number'
+     OQSYSPRT E                L132#4
+     O                         SEQNUM     7
+     O                         PGMNAM    99
+     O***                      SEQNUM    22
+     O***                      RCRLVL    30
+     O***                      TRCNUM    42
+     OQSYSPRT E                L132#5
+     O                         SEQNUM     7
+     O                N91      SRCDTA    88
+     O                         PGMNAM    99
+     O***                      SEQNUM    22
+     O***                      RCRLVL    30
+     O***                      TRCNUM    42
+     O***             N91      SRCDTA   132
+**
+ 100000
+0200000
+-300000
++000000
+1000100
+2000200
+3000300
+4000400
+5000500
+6000600
+7000700
+B000800
+9000900
+A001000
+B001100
+C001200
+

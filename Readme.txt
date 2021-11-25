@@ -1,0 +1,4 @@
+--strisdb para el programa porque tiene que estar en opm debug y no en ile debug
+--addtrc para el programa
+--call el programa
+--cuando termina de correr dtrc
